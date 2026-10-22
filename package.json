@@ -1,0 +1,51 @@
+{
+  "name": "threatlock",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "VITE_APP_MODE=local vite --host 127.0.0.1",
+    "build": "VITE_APP_MODE=local tsc -b && VITE_APP_MODE=local vite build",
+    "test": "vitest run",
+    "preview": "vite preview --host 127.0.0.1",
+    "test:e2e": "playwright test",
+    "format:check": "prettier --check src cloud infra e2e *.ts *.json index.html README.md",
+    "dev:cloud": "VITE_APP_MODE=cloud vite --host 127.0.0.1",
+    "build:cloud": "tsc -b && VITE_APP_MODE=cloud vite build",
+    "synth": "cdk synth --no-lookups",
+    "typecheck:cloud": "tsc -p tsconfig.cloud.json"
+  },
+  "dependencies": {
+    "@aws-sdk/client-bedrock-runtime": "^3.1155.0",
+    "@aws-sdk/client-dynamodb": "^3.1155.0",
+    "@aws-sdk/client-s3": "^3.1155.0",
+    "@aws-sdk/client-textract": "^3.1155.0",
+    "@aws-sdk/lib-dynamodb": "^3.1155.0",
+    "@aws-sdk/s3-presigned-post": "^3.1155.0",
+    "aws-cdk-lib": "^2.274.0",
+    "constructs": "^10.8.1",
+    "lucide-react": "^0.468.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.1",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.8",
+    "@types/node": "^26.6.5",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "aws-cdk": "^2.1146.0",
+    "esbuild": "^0.28.2",
+    "jsdom": "^26.1.0",
+    "prettier": "^3.9.10",
+    "tsx": "^4.23.15",
+    "typescript": "~5.7.2",
+    "vite": "^8.3.4",
+    "vitest": "^5.0.5"
+  },
+  "engines": {
+    "node": ">=22.14.0"
+  }
+}

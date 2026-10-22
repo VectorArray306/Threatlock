@@ -1,0 +1,11 @@
+node_modules/
+dist/
+*.tsbuildinfo
+playwright-report/
+test-results/
+.env
+.env.*
+!.env.example
+review-screenshots/
+
+cdk.out/

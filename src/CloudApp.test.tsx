@@ -143,4 +143,66 @@ describe("cloud send guards", () => {
       "unscored",
     );
   });
+  it("reuses one assessment id until the draft or context changes", async () => {
+    mocks.analyze.mockResolvedValue({
+      status: "allowed",
+      reason: "CLEAR",
+      severity: "none",
+      risk: 0,
+      source: "bedrock",
+      explanation: "Contextual analysis found no warning.",
+    });
+    const user = userEvent.setup();
+    render(<CloudApp />);
+    await screen.findByLabelText("Draft");
+    await waitFor(() =>
+      expect(
+        (
+          screen.getByRole("button", {
+            name: "Check conversation",
+          }) as HTMLButtonElement
+        ).disabled,
+      ).toBe(false),
+    );
+    await user.type(screen.getByLabelText("Draft"), "public agenda");
+    const check = screen.getByRole("button", { name: "Check conversation" });
+    await user.click(check);
+    await screen.findByRole("status");
+    await user.click(check);
+    await screen.findByRole("status");
+    expect(mocks.analyze.mock.calls[0][0].id).toBe(
+      mocks.analyze.mock.calls[1][0].id,
+    );
+    await user.type(screen.getByLabelText("Draft"), " changed");
+    await user.click(
+      screen.getByRole("button", { name: "Check conversation" }),
+    );
+    expect(mocks.analyze.mock.calls[2][0].id).not.toBe(
+      mocks.analyze.mock.calls[0][0].id,
+    );
+  });
+  it("returns to sign-in when the API reports an expired session", async () => {
+    mocks.analyze.mockRejectedValue(
+      new Error("Session expired; sign in again."),
+    );
+    const user = userEvent.setup();
+    render(<CloudApp />);
+    await screen.findByLabelText("Draft");
+    await waitFor(() =>
+      expect(
+        (
+          screen.getByRole("button", {
+            name: "Check conversation",
+          }) as HTMLButtonElement
+        ).disabled,
+      ).toBe(false),
+    );
+    await user.click(
+      screen.getByRole("button", { name: "Check conversation" }),
+    );
+    expect(
+      await screen.findByRole("button", { name: "Sign in with Cognito" }),
+    ).toBeTruthy();
+    expect(screen.getByRole("alert").textContent).toContain("Session expired");
+  });
 });

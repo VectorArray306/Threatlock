@@ -32,6 +32,7 @@ export default function CloudApp() {
   const [rules, setRules] = useState("[]");
   const [incidents, setIncidents] = useState<CloudIncident[]>([]);
   const authentication = useRef<Promise<string | undefined>>(undefined);
+  const assessmentIds = useRef(new Map<string, string>());
   useEffect(() => {
     let active = true;
     try {
@@ -59,7 +60,9 @@ export default function CloudApp() {
     try {
       await action();
     } catch (e) {
-      setError((e as Error).message);
+      const message = (e as Error).message;
+      if (message === "Session expired; sign in again.") setToken("");
+      setError(message);
     } finally {
       setBusy(false);
     }
@@ -254,10 +257,22 @@ export default function CloudApp() {
               disabled={busy}
               onClick={() =>
                 void run(async () => {
-                  const value = await api!.analyze({
-                    id: crypto.randomUUID(),
+                  const messages = context.split("\n").filter(Boolean);
+                  const key = JSON.stringify({
                     text,
-                    context: context.split("\n").filter(Boolean),
+                    context: messages,
+                    evidence,
+                    policyVersion: policy.version,
+                  });
+                  let assessmentId = assessmentIds.current.get(key);
+                  if (!assessmentId) {
+                    assessmentId = crypto.randomUUID();
+                    assessmentIds.current.set(key, assessmentId);
+                  }
+                  const value = await api!.analyze({
+                    id: assessmentId,
+                    text,
+                    context: messages,
                     evidence,
                   });
                   setEvidence([]);

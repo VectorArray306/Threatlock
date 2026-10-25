@@ -67,7 +67,7 @@ The intended AWS Region is **`ap-south-1` (Mumbai)**. The selected Bedrock model
 - DynamoDB stores policy rules, upload metadata, assessment fingerprints/results, and incident metadata. It does not store conversation bodies, OCR text, attachment bytes, or free-form model explanations. The server does not intentionally log prompts or request bodies.
 - Assessment IDs are idempotent: repeating the same request reuses its result; reusing an ID for different content is rejected. Policy publication uses conditional transactional writes to prevent conflicting versions.
 - Presigned upload forms expire after five minutes; upload references after 15 minutes. The server attempts to delete referenced owned objects after assessment, and an S3 lifecycle rule is the fallback for abandoned or interrupted uploads. S3 lifecycle deletion is asynchronous.
-- API Gateway is configured for 2 requests/second with a burst of 4; Lambda concurrency is limited to 2. These limits and the AWS Budget alert reduce exposure but are **not** a hard spending cap or a zero-payment guarantee.
+- API Gateway is configured for 2 requests/second with a burst of 4. Reserved Lambda concurrency is omitted so deployment works on accounts whose concurrency quota is 10, the minimum AWS leaves unreserved. These limits and the AWS Budget alert reduce exposure but are **not** a hard spending cap or a zero-payment guarantee.
 
 The infrastructure definition is [`infra/stack.ts`](infra/stack.ts). No credentials or account-specific endpoints are committed; [`.env.example`](.env.example) contains placeholders only. The CloudFormation deployment gate remains closed until the account, model, and cost review is explicitly completed.
 

@@ -43,11 +43,21 @@ describe("offline stack", () => {
     });
     template.hasResourceProperties("AWS::ApiGatewayV2::Route", {
       AuthorizationType: "JWT",
+      RouteKey: "GET /{proxy+}",
     });
+    template.hasResourceProperties("AWS::ApiGatewayV2::Api", {
+      CorsConfiguration: {
+        AllowOrigins: ["https://demo.test"],
+        AllowHeaders: ["Authorization", "Content-Type"],
+      },
+    });
+    expect(JSON.stringify(template.toJSON())).not.toContain("ANY /{proxy+}");
     template.hasResourceProperties("AWS::Lambda::Function", {
-      ReservedConcurrentExecutions: 2,
       Timeout: 29,
     });
+    expect(JSON.stringify(template.toJSON())).not.toContain(
+      "ReservedConcurrentExecutions",
+    );
     template.hasResourceProperties("AWS::Cognito::UserPool", {
       MfaConfiguration: "ON",
       AdminCreateUserConfig: { AllowAdminCreateUserOnly: true },

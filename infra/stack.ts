@@ -128,7 +128,6 @@ export class ThreatlockStack extends cdk.Stack {
       runtime: lambda.Runtime.NODEJS_24_X,
       memorySize: 256,
       timeout: cdk.Duration.seconds(29),
-      reservedConcurrentExecutions: 2,
       logGroup,
       environment: {
         TABLE: table.tableName,
@@ -175,7 +174,12 @@ export class ThreatlockStack extends cdk.Stack {
     );
     http.addRoutes({
       path: "/{proxy+}",
-      methods: [api.HttpMethod.ANY],
+      methods: [
+        api.HttpMethod.GET,
+        api.HttpMethod.POST,
+        api.HttpMethod.PUT,
+        api.HttpMethod.PATCH,
+      ],
       integration: new integrations.HttpLambdaIntegration(
         "RuntimeIntegration",
         fn,

@@ -6,6 +6,7 @@ test-results/
 .env
 .env.*
 !.env.example
+.presenter.local
 review-screenshots/
 
 cdk.out/

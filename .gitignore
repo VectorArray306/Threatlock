@@ -7,6 +7,17 @@ test-results/
 .env.*
 !.env.example
 .presenter.local
+.presenter.*
+!.presenter.local.example
+*outputs.json
+threatlock-outputs.json
+*.pem
+*.key
+*.p12
+*.pfx
+credentials
+credentials.*
+.aws/
 review-screenshots/
 
 cdk.out/

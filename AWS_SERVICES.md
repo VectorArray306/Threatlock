@@ -4,7 +4,7 @@ The hosted presenter is the cloud UI, connected to the Mumbai (`ap-south-1`) sta
 
 Open the app at [https://aws-integrations.d3mht847j0mfal.amplifyapp.com](https://aws-integrations.d3mht847j0mfal.amplifyapp.com).
 
-The presenter username, password, and authenticator secret are in the untracked `.presenter.local` file on the machine that created the user. They are not stored in git.
+Copy `.presenter.local.example` to `.presenter.local` and fill in the invited presenter email, password, and authenticator secret. That file is gitignored and must not be committed.
 
 ## How to use it
 
@@ -28,18 +28,18 @@ PNG, JPEG, and single-page PDF files under 1 MB can be attached to the draft or 
 
 ## What is connected
 
-| Service | Role in the app |
-| --- | --- |
-| Amplify Hosting | Serves the cloud UI on the branch URL above. The Vite build has the API URL, Cognito domain, and client id baked in. |
-| Amazon Cognito | Invitation-only presenter pool, required authenticator MFA, and the hosted sign-in page. The browser uses authorization-code PKCE. Callback and logout URLs are the Amplify origin. |
-| API Gateway HTTP API | Authenticated routes for policy, uploads, assessments, and incidents. Browser preflight is answered without a JWT. Anonymous and invalid tokens receive 401. |
-| Lambda | Runs `cloud/aws.ts`. It checks policy, reads uploads, calls OCR and the model, and writes metadata only. |
-| DynamoDB | Stores published and staged policy, upload ownership, and metadata-only incidents. Conversation text, OCR text, and file bytes are not written here. |
-| Amazon S3 | Holds temporary attachments behind a private bucket. The browser uploads with a presigned POST. Objects are deleted after assessment, and the bucket expires leftovers after one day. |
-| Amazon Textract | The function is allowed to call `DetectDocumentText` for attachment OCR. |
-| Amazon Bedrock | The function is allowed to call `mistral.ministral-3-8b-instruct` in Mumbai only. |
-| CloudWatch Logs | Keeps the function logs for one week. The function does not log prompts or message bodies. |
-| AWS Budgets | Monthly cost budget of USD 20 with an alert at 80 percent. Confirm the subscription email from AWS. The budget does not stop usage. |
+| Service              | Role in the app                                                                                                                                                                       |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Amplify Hosting      | Serves the cloud UI on the branch URL above. The Vite build has the API URL, Cognito domain, and client id baked in.                                                                  |
+| Amazon Cognito       | Invitation-only presenter pool, required authenticator MFA, and the hosted sign-in page. The browser uses authorization-code PKCE. Callback and logout URLs are the Amplify origin.   |
+| API Gateway HTTP API | Authenticated routes for policy, uploads, assessments, and incidents. Browser preflight is answered without a JWT. Anonymous and invalid tokens receive 401.                          |
+| Lambda               | Runs `cloud/aws.ts`. It checks policy, reads uploads, calls OCR and the model, and writes metadata only.                                                                              |
+| DynamoDB             | Stores published and staged policy, upload ownership, and metadata-only incidents. Conversation text, OCR text, and file bytes are not written here.                                  |
+| Amazon S3            | Holds temporary attachments behind a private bucket. The browser uploads with a presigned POST. Objects are deleted after assessment, and the bucket expires leftovers after one day. |
+| Amazon Textract      | The function is allowed to call `DetectDocumentText` for attachment OCR.                                                                                                              |
+| Amazon Bedrock       | The function is allowed to call `mistral.ministral-3-8b-instruct` in Mumbai only.                                                                                                     |
+| CloudWatch Logs      | Keeps the function logs for one week. The function does not log prompts or message bodies.                                                                                            |
+| AWS Budgets          | Monthly cost budget of USD 20 with an alert at 80 percent. Confirm the subscription email from AWS. The budget does not stop usage.                                                   |
 
 `scripts/write-cloud-env.sh` can refresh a local `.env.local` from the stack outputs `ApiUrl`, `CognitoDomain`, and `ClientId` for `npm run dev:cloud`.
 

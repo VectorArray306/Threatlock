@@ -1,0 +1,4 @@
+# Copy to .presenter.local (gitignored). Never commit the real file.
+username=you@example.com
+password=
+totp_secret=

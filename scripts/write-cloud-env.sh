@@ -24,3 +24,4 @@ VITE_COGNITO_DOMAIN=${domain}
 VITE_COGNITO_CLIENT_ID=${client}
 EOF
 echo "Wrote .env.local for cloud mode from stack ${stack} in ${region}."
+echo "Presenter credentials belong in gitignored .presenter.local (see .presenter.local.example)."
